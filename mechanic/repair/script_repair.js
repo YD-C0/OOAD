@@ -51,6 +51,35 @@ function addRepair() {
   window.location.href = 'from_repair.html';
 }
 
+async function updateRepair(repairId, value, type) {
+    
+  const data = {
+      repair_id: repairId,
+      value: value,
+      type: type
+  };
+
+  try {
+      const response = await fetch('update_repair.php', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+          // รีเฟรชตารางหลังจากอัพเดทข้อมูล
+          filterTable();
+      } else {
+          alert('เกิดข้อผิดพลาดในการอัพเดทข้อมูล');
+      }
+  } catch (error) {
+      console.error('Error:', error);
+      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+  }
+}
+
 // function deleteRepair(index) {
 //     let repairs = JSON.parse(localStorage.getItem('repairs')) || [];
 //     repairs.splice(index, 1);
