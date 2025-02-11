@@ -26,7 +26,7 @@ $status_data = mysqli_fetch_all($status_query, MYSQLI_ASSOC);
 <body>
     <nav>
         <ul class="menu">
-            <li><a href="..\car_report\car_report.html">รายงานสภาพรถพยาบาล</a></li>
+            <li><a href="..\car_report\car_report.php">รายงานสภาพรถพยาบาล</a></li>
             <li><a href="repair.php">การซ่อมอุปกรณ์และรถพยาบาล</a></li>
         </ul>
     </nav>
