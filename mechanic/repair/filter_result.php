@@ -76,7 +76,7 @@ $repair_data = mysqli_fetch_all($query_result, MYSQLI_ASSOC);
                 <td><?php echo $rs_result['repairing']; ?></td>
                 <td><?php echo $rs_result['repair_reason']; ?></td>
                 <td>
-                    <?php if ($rs_result['repair_success_datetime'] !== null) { ?>
+                    <?php if ($rs_result['repair_success_datetime'] !== "0000-00-00 00:00:00") { ?>
                         <?php echo $rs_result['repair_success_datetime']; ?>
                     <?php } else { ?>
                         <input type="datetime-local"
