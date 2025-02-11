@@ -48,7 +48,7 @@ async function filterTable() {
 
 function addRepair() {
   // เอาไว้เชื่อมกับ from_repair.php
-  window.location.href = 'from_repair.html';
+  window.location.href = 'from_repair.php';
 }
 
 async function updateRepair(repairId, value, type) {
