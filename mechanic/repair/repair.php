@@ -99,10 +99,10 @@ $status_data = mysqli_fetch_all($status_query, MYSQLI_ASSOC);
                             <td><?php echo $rs_result['repairing']; ?></td>
                             <td><?php echo $rs_result['repair_reason']; ?></td>
                             <td>
-                                <!-- ถ้าข้อมูล repair_success_datetime ในตาราง repair ไม่ใช่ค่าว่าง (ทำดำเนินการเสร็จแล้ว)-->
+                                <!-- ถ้าข้อมูล repair_success_datetime ในตาราง repair ไม่ใช่ค่า 0000-00-00 00:00:00 (ดำเนินการเสร็จแล้ว)-->
                                 <!-- ให้แสดงวันที่ซ่อมรายการนั้น ๆ เสร็จ -->
                                 <!-- ถ้าไม่ตรงตามเงื่อนไขด้านบน ให้สามารถเลือกวันเวลาเพื่ออัพเดตในฐานข้อมูลได้ -->
-                                <?php if ($rs_result['repair_success_datetime'] !== null) { ?>
+                                <?php if ($rs_result['repair_success_datetime'] !== "0000-00-00 00:00:00") { ?>
                                     <?php echo $rs_result['repair_success_datetime']; ?>
                                 <?php } else { ?>
                                     <input type="datetime-local"
