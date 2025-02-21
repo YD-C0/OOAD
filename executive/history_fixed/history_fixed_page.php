@@ -1,60 +1,75 @@
-<?php 
-    include 'connect.php';
+<?php
+include 'connect.php';
 
-    $query_all = mysqli_query($conn, 
-        "SELECT * from repair 
+$query_all = mysqli_query(
+    $conn,
+    "SELECT * from repair 
         INNER JOIN ambulance on ambulance.ambulance_id = repair.ambulance_id
-        INNER JOIN repair_staff on repair.repair_staff_id = repair_staff.repair_staff_id");
-    $all_data = mysqli_fetch_all($query_all, MYSQLI_ASSOC);
+        INNER JOIN repair_staff on repair.repair_staff_id = repair_staff.repair_staff_id"
+);
+$all_data = mysqli_fetch_all($query_all, MYSQLI_ASSOC);
 
-    // ประเภท
-    $type_query = mysqli_query($conn, 
-        "SELECT DISTINCT repair_type FROM repair");
-    $type_data = mysqli_fetch_all($type_query, MYSQLI_ASSOC);
+// ประเภท
+$type_query = mysqli_query(
+    $conn,
+    "SELECT DISTINCT repair_type FROM repair"
+);
+$type_data = mysqli_fetch_all($type_query, MYSQLI_ASSOC);
 
-    // เหตุผล
-    $reason_query = mysqli_query($conn, 
-        "SELECT DISTINCT repair_reason FROM repair");
-    $reason_data = mysqli_fetch_all($reason_query, MYSQLI_ASSOC);
+// เหตุผล
+$reason_query = mysqli_query(
+    $conn,
+    "SELECT DISTINCT repair_reason FROM repair"
+);
+$reason_data = mysqli_fetch_all($reason_query, MYSQLI_ASSOC);
 
-    // อะไหล่ที่ซ่อม
-    $repairing_query = mysqli_query($conn, 
-        "SELECT DISTINCT repair_repairing FROM repair");
-    $repairing_data = mysqli_fetch_all($repairing_query, MYSQLI_ASSOC);
+// อะไหล่ที่ซ่อม
+$repairing_query = mysqli_query(
+    $conn,
+    "SELECT DISTINCT repair_repairing FROM repair"
+);
+$repairing_data = mysqli_fetch_all($repairing_query, MYSQLI_ASSOC);
 
-    $status_query = mysqli_query($conn, 
-        "SELECT DISTINCT repair_status FROM repair");
-    $status_data = mysqli_fetch_all($status_query, MYSQLI_ASSOC);
+// สถานะ
+$status_query = mysqli_query(
+    $conn,
+    "SELECT DISTINCT repair_status FROM repair"
+);
+$status_data = mysqli_fetch_all($status_query, MYSQLI_ASSOC);
 
-    //----------------------------
-    // Bar Chart แสดงจำนวนครั้งการซ่อม
-    // เลือก id รถพยาบาลใช้เป็น labels
-    $ambu_query = mysqli_query($conn, 
-    "SELECT ambulance_plate FROM ambulance");
-    $ambu_data = mysqli_fetch_all($ambu_query, MYSQLI_ASSOC);
+//----------------------------
+// Bar Chart แสดงจำนวนครั้งการซ่อม
+// เลือก id รถพยาบาลใช้เป็น labels
+$ambu_query = mysqli_query(
+    $conn,
+    "SELECT ambulance_plate FROM ambulance"
+);
+$ambu_data = mysqli_fetch_all($ambu_query, MYSQLI_ASSOC);
 
-    // เตรียมอาร์เรย์นับจำนวน
-    $countAmID = array_fill_keys(array_column($ambu_data, 'ambulance_plate'), 0);
+// เตรียมอาร์เรย์นับจำนวน
+$countAmID = array_fill_keys(array_column($ambu_data, 'ambulance_plate'), 0);
 
-    // นับจำนวนครั้งที่แต่ละ ambulance_id ปรากฏใน $all_data
-    foreach ($all_data as $row) {
+// นับจำนวนครั้งที่แต่ละ ambulance_id ปรากฏใน $all_data
+foreach ($all_data as $row) {
     if (isset($countAmID[$row['ambulance_plate']])) {
         $countAmID[$row['ambulance_plate']]++;
-    }}
-    //----------------------------
+    }
+}
+//----------------------------
 
-    //----------------------------
-    // Pie Chart แสดงสัดส่วนประเภทการซ่อม
-    // ใช้ $type_data ที่เคย query ไปแล้วข้างบน
+//----------------------------
+// Pie Chart แสดงสัดส่วนประเภทการซ่อม
+// ใช้ $type_data ที่เคย query ไปแล้วข้างบน
 
-    // เตรียมอาร์เรย์นับจำนวน
-    $countType = array_fill_keys(array_column($type_data, 'repair_type'), 0);
-    // นับจำนวนครั้งที่แต่ละ ambulance_id ปรากฏใน $all_data
-    foreach ($all_data as $row) {
+// เตรียมอาร์เรย์นับจำนวน
+$countType = array_fill_keys(array_column($type_data, 'repair_type'), 0);
+// นับจำนวนครั้งที่แต่ละ ambulance_id ปรากฏใน $all_data
+foreach ($all_data as $row) {
     if (isset($countType[$row['repair_type']])) {
         $countType[$row['repair_type']]++;
-    }}
-    //----------------------------
+    }
+}
+//----------------------------
 
 ?>
 
@@ -64,7 +79,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?ts=<?php echo time(); ?>">
     <link rel="stylesheet" href="styletable.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,16 +110,30 @@
     </header>
     <br>
 
-    <div class="myChart">
-        <div>
-            <h2>จำนวนครั้งที่รถพยาบาลผ่านการซ่อม</h2>
-            <canvas id="ambulance_fixed"></canvas>
+    <div>
+        <div class="myChart">
+            <div class="thisChart" id="chartLeft">
+                <canvas id="ambulance_fixed"></canvas>
+            </div>
+            <div class="thisChart" id="chartRight">
+                <canvas id="type_fixed"></canvas>
+            </div>
+            <table style="width: auto; height: 50px;">
+                <thead>
+                    <tr>
+                        <th>รถพยาบาลทั้งหมด</th>
+                        <th>พร้อม</th>
+                        <th>ไม่พร้อม</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <td>fff</td>
+                </tbody>
+            </table>
         </div>
-        <div>
-            <h2>สัดส่วนของประเภทการซ่อม</h2>
-            <canvas id="type_fixed"></canvas>
-        </div>
+
     </div>
+
 
 
     <div class="search-section">
@@ -174,32 +203,27 @@
                     <option value=" > 50000">มากกว่า 50,000 บาท</option>
                 </select>
 
-                <!-- <label for="">ความถี่ในการซ่อม:</label>
-                <p>ผ่านการซ่อมมาแล้ว</p>
-                <input class="inputnumb" type="number" value="0" max="100" min="0"> ครั้ง -->
-
-                </select>
             </div>
         </div>
 
     </div>
-    
+
 
     <?php
     //    foreach($all_data as $row)
     //     print_r($row["ambulance_id"]);
     ?>
-    
+
     <select class="select" id="select_type" name="option" style="margin-left: 17%;">
         <option value="" disabled selected>เลือกประเภทของสิ่งที่ซ่อม</option>
-            <?php foreach ($type_data as $row) { ?>
-                <option value="<?php echo $row["repair_type"]; ?>">
-                    <?php echo $row["repair_type"]; ?>
-                </option>
-            <?php } ?>
+        <?php foreach ($type_data as $row) { ?>
+            <option value="<?php echo $row["repair_type"]; ?>">
+                <?php echo $row["repair_type"]; ?>
+            </option>
+        <?php } ?>
     </select>
 
-    
+
 
     <main id="main-content" class="main-content">
         <table>
@@ -224,41 +248,41 @@
 
                     <!-- เมื่อเข้ามาครั้งแรก จะแสดงข้อมูลทั้งหมดจากตาราง repair -->
                     <?php foreach ($all_data as $rs_result) { ?>
-                        <tr>
-                            <!-- ยังไม่ได้ให้แสดงรูป -->
-                            <!-- <td> <img
+                <tr>
+                    <!-- ยังไม่ได้ให้แสดงรูป -->
+                    <!-- <td> <img
                             src="img/van-ambulance-vehicle-emergency-medical-services-toyota-commuter-abl-commu-alsv-wang-saphung-hospital-loei-carryboy.jpg"
                             alt="เตียงผู้ป่วยแบบไฟฟ้า" class="equipment-image"></td> -->
 
-                            <td><?php echo $rs_result['ambulance_plate']; ?></td>
-                            <td><?php echo $rs_result['ambulance_level']; ?></td>
-                            
-                            <td><?php echo $rs_result['repair_staff_firstname']; ?></td>
-                            <td><?php echo $rs_result['repair_date']; ?></td>
-                            <td><?php echo $rs_result['repair_success_datetime']; ?></td>
+                    <td><?php echo $rs_result['ambulance_plate']; ?></td>
+                    <td><?php echo $rs_result['ambulance_level']; ?></td>
 
-                            <td><?php echo $rs_result['repair_type']; ?></td>
-                            <td><?php echo $rs_result['repair_reason']; ?></td>
-                            <td><?php echo $rs_result['repair_repairing']; ?></td>
-                            <td><?php echo $rs_result['repair_status']; ?></td>
-                            <!-- ยังไม่มีข้อมูลที่เก็บตรงนี้ เลยยังดึงมาไม่ได้ -->
-                            <td>
-                            <?php if ($rs_result['repair_cost'] == '0') { ?>
-                                <?php echo "-"?>
-                            <?php } else { ?>
-                                <?php echo $rs_result['repair_cost'] ?>
-                            <?php } ?>
-                            </td>
-                                
-                            <!-- คำนวณจากใน repair?
+                    <td><?php echo $rs_result['repair_staff_firstname']; ?></td>
+                    <td><?php echo $rs_result['repair_date']; ?></td>
+                    <td><?php echo $rs_result['repair_success_datetime']; ?></td>
+
+                    <td><?php echo $rs_result['repair_type']; ?></td>
+                    <td><?php echo $rs_result['repair_reason']; ?></td>
+                    <td><?php echo $rs_result['repair_repairing']; ?></td>
+                    <td><?php echo $rs_result['repair_status']; ?></td>
+                    <!-- ยังไม่มีข้อมูลที่เก็บตรงนี้ เลยยังดึงมาไม่ได้ -->
+                    <td>
+                        <?php if ($rs_result['repair_cost'] == '0') { ?>
+                            <?php echo "-" ?>
+                        <?php } else { ?>
+                            <?php echo $rs_result['repair_cost'] ?>
+                        <?php } ?>
+                    </td>
+
+                    <!-- คำนวณจากใน repair?
                             <td>
                                 
                             </td> -->
-                            
-                        </tr>
-                    <?php } ?>
 
                 </tr>
+            <?php } ?>
+
+            </tr>
         </table>
 
         <!-- Modal เมื่อกด ดูรายละเอียด -->
@@ -305,8 +329,8 @@
 
         // ตั้งค่าปฏิทิน Flatpickr
         flatpickr("#calendarSelect", {
-            dateFormat: "Y-m-d",  // รูปแบบวันที่เป็น YYYY-MM-DD
-            onChange: function (selectedDates, dateStr, instance) {
+            dateFormat: "Y-m-d", // รูปแบบวันที่เป็น YYYY-MM-DD
+            onChange: function(selectedDates, dateStr, instance) {
                 // เมื่อผู้ใช้เลือกวันที่, เรียกใช้งานฟังก์ชัน updateChart
                 updateChart(dateStr);
             }
@@ -317,6 +341,7 @@
             document.querySelector('.modal').style.display = 'block';
             document.querySelector('.overlay').style.display = 'block';
         }
+
         function closeModal() {
             document.querySelector('.modal').style.display = 'none';
             document.querySelector('.overlay').style.display = 'none';
@@ -337,6 +362,14 @@
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
                 }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'จำนวนครั้งที่รถพยาบาลผ่านการซ่อม'
+                    }
+                }
             }
         });
         //----------------------------
@@ -351,19 +384,27 @@
             data: {
                 labels: TypeLabels,
                 datasets: [{
-                    label: 'จำนวนครั้งที่ซ่อม',
+                    label: 'จำนวน',
                     data: Types,
                     backgroundColor: [
                         'rgb(255, 99, 132)',
                         'rgb(54, 162, 235)'
-                    ],  
+                    ],
                     borderColor: 'rgb(166, 169, 175)',
                     borderWidth: 1
                 }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'สัดส่วนของประเภทการซ่อม'
+                    }
+                }
             }
+
         });
         //----------------------------
-
     </script>
 </body>
 
