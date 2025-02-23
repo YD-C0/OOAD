@@ -122,8 +122,6 @@ foreach ($notReady_ambu_data as $num) {
 //----------------------------
 
 
-
-
 ?>
 
 <!DOCTYPE html>
@@ -339,21 +337,6 @@ foreach ($notReady_ambu_data as $num) {
 
             </tr>
         </table>
-
-        <!-- Modal เมื่อกด ดูรายละเอียด -->
-        <div class="overlay" onclick="closeModal()"></div>
-        <div class="modal">
-            <h3>อุปกรณ์ทางการแพทย์ในรถ ทะเบียน: ณน 879</h3>
-            <p><strong>AED:</strong> - </p>
-            <p><strong>เตียง:</strong> ชำรุด</p>
-            <p><strong>เครื่องช่วยหายใจ:</strong> - </p>
-            <p><strong>เฝือกลม:</strong> ชำรุด</p>
-            <p><strong>ถังออกซิเจน:</strong> หมดอายุ</p>
-            <p><strong>อุปกรณ์ปฐมพยาบาล:</strong> - </p>
-            <div class="modal-buttons">
-                <button class="close" onclick="closeModal()">Close</button>
-            </div>
-        </div>
     </main>
 
     <script>
@@ -382,24 +365,17 @@ foreach ($notReady_ambu_data as $num) {
 
         });
 
-        // ตั้งค่าปฏิทิน Flatpickr
-        flatpickr("#calendarSelect", {
-            dateFormat: "Y-m-d", // รูปแบบวันที่เป็น YYYY-MM-DD
-            onChange: function(selectedDates, dateStr, instance) {
-                // เมื่อผู้ใช้เลือกวันที่, เรียกใช้งานฟังก์ชัน updateChart
-                updateChart(dateStr);
-            }
-        });
+        let allAmbu = <?php echo $all_ambu?>;
+        let ReadyAmbu = <?php echo $ready_ambu?>;
+        let notReadyAmbu = <?php echo $notReady_ambu?>;
 
-        // ฟังก์ชันสำหรับเปิด Modal แสดงรายละเอียดของอุปกรณ์ทางการแพทย์ที่ไม่พร้อมใช้งาน
-        function openModal() {
-            document.querySelector('.modal').style.display = 'block';
-            document.querySelector('.overlay').style.display = 'block';
-        }
+        // console.log(ReadyAmbu);
+        // console.log(notReadyAmbu);
 
-        function closeModal() {
-            document.querySelector('.modal').style.display = 'none';
-            document.querySelector('.overlay').style.display = 'none';
+        let percent = (ReadyAmbu/allAmbu) * 100;
+        // console.log(percent);
+        if (percent < 80) {
+            alert("รถพยาบาลพร้อมใช้งานน้อยกว่า 80% ");
         }
 
         //----------------------------
