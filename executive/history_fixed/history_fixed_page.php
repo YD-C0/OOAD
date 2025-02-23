@@ -71,6 +71,59 @@ foreach ($all_data as $row) {
 }
 //----------------------------
 
+//----------------------------
+// นับจำนวนรถทั้งหมด
+$count_all_ambu_query = mysqli_query(
+    $conn,
+    "SELECT COUNT(ambulance_id) as AllAmbu FROM ambulance"
+);
+$all_ambu_data = mysqli_fetch_all($count_all_ambu_query, MYSQLI_ASSOC);
+// print_r($all_ambu_data);
+
+// เก็บจำนวนรถทั้งหมดไว้ในตัวแปรชื่อว่า $all_ambu
+$all_ambu = 0;
+foreach ($all_ambu_data as $num) {
+    foreach ($num as $key => $value) {
+        $all_ambu = $value;
+    }
+}
+
+// นับจำนวนรถที่พร้อม
+$count_ready_ambu_query = mysqli_query(
+    $conn,
+    "SELECT COUNT(ambulance_id) as readyAmbu FROM ambulance WHERE ambulance_status='พร้อม'"
+);
+$ready_ambu_data = mysqli_fetch_all($count_ready_ambu_query, MYSQLI_ASSOC);
+// print_r($all_ambu_data);
+
+// เก็บจำนวนรถทั้งหมดไว้ในตัวแปรชื่อว่า $ready_ambu
+$ready_ambu = 0;
+foreach ($ready_ambu_data as $num) {
+    foreach ($num as $key => $value) {
+        $ready_ambu = $value;
+    }
+}
+
+// นับจำนวนรถที่ไม่พร้อม
+$count_notReady_ambu_query = mysqli_query(
+    $conn,
+    "SELECT COUNT(ambulance_id) as readyAmbu FROM ambulance WHERE ambulance_status='ไม่พร้อม'"
+);
+$notReady_ambu_data = mysqli_fetch_all($count_notReady_ambu_query, MYSQLI_ASSOC);
+// print_r($all_ambu_data);
+
+// เก็บจำนวนรถทั้งหมดไว้ในตัวแปรชื่อว่า $ready_ambu
+$notReady_ambu = 0;
+foreach ($notReady_ambu_data as $num) {
+    foreach ($num as $key => $value) {
+        $notReady_ambu = $value;
+    }
+}
+//----------------------------
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -127,7 +180,9 @@ foreach ($all_data as $row) {
                     </tr>
                 </thead>
                 <tbody>
-                        <td>fff</td>
+                        <td><?php echo $all_ambu?></td>
+                        <td><?php echo $ready_ambu?></td>
+                        <td><?php echo $notReady_ambu?></td>
                 </tbody>
             </table>
         </div>
