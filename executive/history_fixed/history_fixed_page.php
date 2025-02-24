@@ -38,21 +38,21 @@ $status_query = mysqli_query(
 $status_data = mysqli_fetch_all($status_query, MYSQLI_ASSOC);
 
 //----------------------------
-// Bar Chart แสดงจำนวนครั้งการซ่อม
-// เลือก id รถพยาบาลใช้เป็น labels
+// Bar Chart แสดงจำนวนครั้งการซ่อมของรถแต่ละ level
+// เลือก level รถพยาบาลใช้เป็น labels
 $ambu_query = mysqli_query(
     $conn,
-    "SELECT ambulance_plate FROM ambulance"
+    "SELECT DISTINCT ambulance_level FROM ambulance ORDER BY ambulance_level"
 );
 $ambu_data = mysqli_fetch_all($ambu_query, MYSQLI_ASSOC);
 
 // เตรียมอาร์เรย์นับจำนวน
-$countAmID = array_fill_keys(array_column($ambu_data, 'ambulance_plate'), 0);
+$countAmLevel = array_fill_keys(array_column($ambu_data, 'ambulance_level'), 0);
 
-// นับจำนวนครั้งที่แต่ละ ambulance_id ปรากฏใน $all_data
+// นับจำนวนครั้งที่แต่ละ ambulance_level ปรากฏใน $all_data
 foreach ($all_data as $row) {
-    if (isset($countAmID[$row['ambulance_plate']])) {
-        $countAmID[$row['ambulance_plate']]++;
+    if (isset($countAmLevel[$row['ambulance_level']])) {
+        $countAmLevel[$row['ambulance_level']]++;
     }
 }
 //----------------------------
@@ -163,12 +163,15 @@ foreach ($notReady_ambu_data as $num) {
 
     <div>
         <div class="myChart">
+            <!-- canvas แสดงตารางจำนวนการซ่อมรถพยาบาล level 1-3 -->
             <div class="thisChart" id="chartLeft">
                 <canvas id="ambulance_fixed"></canvas>
             </div>
+            <!-- canvas แสดงตารางสัดส่วนของประเภทการซ่อม -->
             <div class="thisChart" id="chartRight">
                 <canvas id="type_fixed"></canvas>
             </div>
+            <!-- ตารางแสดงจำนวนรถพยาบาลทั้งหมด รถพยาบาลที่พร้อม รถพยาบาลที่ไม่พร้อม -->
             <table style="width: auto; height: 50px;">
                 <thead>
                     <tr>
@@ -180,23 +183,14 @@ foreach ($notReady_ambu_data as $num) {
                 <tbody>
                         <td><?php echo $all_ambu?></td>
                         <td><?php echo $ready_ambu?></td>
-                        <td><?php echo $notReady_ambu?></td>
+                        <td style="color: white; background-color:red;"><?php echo $notReady_ambu?></td>
                 </tbody>
             </table>
         </div>
 
     </div>
 
-
-
     <div class="search-section">
-
-        <!-- <div class="search-container">
-            <input type="text" placeholder="ค้นหา..." class="search-input">
-            <button class="search-button">
-                <i class="fa-solid fa-magnifying-glass"></i> 
-            </button>
-        </div> -->
         <div class="filter-icon">
             <i class="fa-solid fa-filter"></i> <!-- ไอคอน Filter -->
         </div>
@@ -251,9 +245,9 @@ foreach ($notReady_ambu_data as $num) {
                 <label for="">ค่าใช้จ่าย:</label>
                 <select id="cost_select" class="filter-select">
                     <option value="" selected>ค่าใช้จ่าย</option>
-                    <option value=" < 10000">ต่ำกว่า 10,000 บาท</option>
-                    <option value=" BETWEEN 10000 AND 50000">10,000-50,000 บาท</option>
-                    <option value=" > 50000">มากกว่า 50,000 บาท</option>
+                    <option value= " BETWEEN 1 AND 10000">ต่ำกว่า 10,000 บาท</option>
+                    <option value= " BETWEEN 10000 AND 50000">10,000-50,000 บาท</option>
+                    <option value= " > 50000">มากกว่า 50,000 บาท</option>
                 </select>
 
             </div>
@@ -262,12 +256,8 @@ foreach ($notReady_ambu_data as $num) {
     </div>
 
 
-    <?php
-    //    foreach($all_data as $row)
-    //     print_r($row["ambulance_id"]);
-    ?>
 
-    <select class="select" id="select_type" name="option" style="margin-left: 17%;">
+    <select class="select" id="select_type" name="option">
         <option value="" disabled selected>เลือกประเภทของสิ่งที่ซ่อม</option>
         <?php foreach ($type_data as $row) { ?>
             <option value="<?php echo $row["repair_type"]; ?>">
@@ -282,7 +272,6 @@ foreach ($notReady_ambu_data as $num) {
         <table>
             <thead>
                 <tr>
-                    <!-- <th></th> -->
                     <th>ทะเบียนรถพยาบาล</th>
                     <th>ระดับรถ</th>
                     <th>บันทึกโดย</th>
@@ -293,19 +282,12 @@ foreach ($notReady_ambu_data as $num) {
                     <th>อุปกรณ์/อะไหล่</th>
                     <th>สถานะการซ่อม</th>
                     <th>ค่าใช้จ่าย(บาท)</th>
-                    <!-- <th>ผ่านการซ่อมมาแล้ว(ครั้ง)</th> -->
                 </tr>
             </thead>
             <tbody>
-                <tr>
-
                     <!-- เมื่อเข้ามาครั้งแรก จะแสดงข้อมูลทั้งหมดจากตาราง repair -->
                     <?php foreach ($all_data as $rs_result) { ?>
                 <tr>
-                    <!-- ยังไม่ได้ให้แสดงรูป -->
-                    <!-- <td> <img
-                            src="img/van-ambulance-vehicle-emergency-medical-services-toyota-commuter-abl-commu-alsv-wang-saphung-hospital-loei-carryboy.jpg"
-                            alt="เตียงผู้ป่วยแบบไฟฟ้า" class="equipment-image"></td> -->
 
                     <td><?php echo $rs_result['ambulance_plate']; ?></td>
                     <td><?php echo $rs_result['ambulance_level']; ?></td>
@@ -326,12 +308,6 @@ foreach ($notReady_ambu_data as $num) {
                             <?php echo $rs_result['repair_cost'] ?>
                         <?php } ?>
                     </td>
-
-                    <!-- คำนวณจากใน repair?
-                            <td>
-                                
-                            </td> -->
-
                 </tr>
             <?php } ?>
 
@@ -365,23 +341,22 @@ foreach ($notReady_ambu_data as $num) {
 
         });
 
+        // รับตัวแปร php ที่แสดงจำนวนรถทั้งหมด, รถที่พร้อม, รถที่ไม่พร้อม
         let allAmbu = <?php echo $all_ambu?>;
         let ReadyAmbu = <?php echo $ready_ambu?>;
         let notReadyAmbu = <?php echo $notReady_ambu?>;
 
-        // console.log(ReadyAmbu);
-        // console.log(notReadyAmbu);
-
+        // คำนวณ % รถที่พร้อมต่อจำนวนรถทั้งหมด
         let percent = (ReadyAmbu/allAmbu) * 100;
-        // console.log(percent);
+        // ถ้า % รถที่พร้อมต่ำกว่าที่ต้องการ ให้ขึ้น alert ตอนเข้าหน้าเว็บ
         if (percent < 80) {
             alert("รถพยาบาลพร้อมใช้งานน้อยกว่า 80% ");
         }
 
         //----------------------------
         //Bar Chart แสดงจำนวนครั้งการซ่อมของรถแต่ละคัน
-        const AmbuLabels = <?php echo json_encode(array_column($ambu_data, 'ambulance_plate')); ?>;
-        const AmbuCars = <?php echo json_encode($countAmID); ?>;
+        const AmbuLabels = <?php echo json_encode(array_column($ambu_data, 'ambulance_level')); ?>;
+        const AmbuCars = <?php echo json_encode($countAmLevel); ?>;
         const AmbuChart = new Chart(document.getElementById("ambulance_fixed"), {
             type: 'bar',
             data: {
@@ -398,7 +373,7 @@ foreach ($notReady_ambu_data as $num) {
                 plugins: {
                     title: {
                         display: true,
-                        text: 'จำนวนครั้งที่รถพยาบาลผ่านการซ่อม'
+                        text: 'จำนวนการซ่อมรถพยาบาล level 1-3'
                     }
                 }
             }
@@ -406,7 +381,7 @@ foreach ($notReady_ambu_data as $num) {
         //----------------------------
 
         //----------------------------
-        //Pie Chart แสดงสัดส่วนประเภทการซ่อมทั้งหมด
+        //Doughnut Chart แสดงสัดส่วนประเภทการซ่อมทั้งหมด
         const TypeLabels = <?php echo json_encode(array_column($type_data, 'repair_type')); ?>;
         const Types = <?php echo json_encode(array_map(fn($label) => $countType[$label] ?? 0, array_column($type_data, 'repair_type'))); ?>;
 

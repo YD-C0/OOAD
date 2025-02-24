@@ -71,7 +71,7 @@ if (count($whereClauses) > 0) {
     $where = ' WHERE' . $level;
 }
 
-echo $where;
+// echo $where;
 
 $query_all = mysqli_query($conn, 
         "SELECT * from repair 
@@ -85,7 +85,6 @@ $all_data = mysqli_fetch_all($query_all, MYSQLI_ASSOC);
 <table>
     <thead>
         <tr>
-            <!-- <th></th> -->
             <th>ทะเบียนรถพยาบาล</th>
             <th>ระดับรถ</th>
             <th>บันทึกโดย</th>
@@ -96,20 +95,12 @@ $all_data = mysqli_fetch_all($query_all, MYSQLI_ASSOC);
             <th>อุปกรณ์/อะไหล่</th>
             <th>สถานะการซ่อม</th>
             <th>ค่าใช้จ่าย(บาท)</th>
-            <!-- <th>ผ่านการซ่อมมาแล้ว(ครั้ง)</th> -->
         </tr>
     </thead>
     <tbody>
-        <tr>
-
             <!-- เมื่อเข้ามาครั้งแรก จะแสดงข้อมูลทั้งหมดจากตาราง repair -->
             <?php foreach ($all_data as $rs_result) { ?>
         <tr>
-            <!-- ยังไม่ได้ให้แสดงรูป -->
-            <!-- <td> <img
-                            src="img/van-ambulance-vehicle-emergency-medical-services-toyota-commuter-abl-commu-alsv-wang-saphung-hospital-loei-carryboy.jpg"
-                            alt="เตียงผู้ป่วยแบบไฟฟ้า" class="equipment-image"></td> -->
-
             <td><?php echo $rs_result['ambulance_plate']; ?></td>
             <td><?php echo $rs_result['ambulance_level']; ?></td>
 
@@ -130,12 +121,6 @@ $all_data = mysqli_fetch_all($query_all, MYSQLI_ASSOC);
                     <?php echo $rs_result['repair_cost'] ?>
                 <?php } ?>
             </td>
-
-            <!-- คำนวณจากใน repair?
-            <td>
-
-            </td> -->
-
         </tr>
     <?php } ?>
 

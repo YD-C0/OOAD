@@ -328,9 +328,9 @@ body {
 .select{
     font-weight: regular;
     font-size: large;
-    width: 10%;
+    /* width: 10%; */
     padding: 10px;
-    margin: 5px 0;
+    margin: 5px 15px;
     display: inline-block;
     border: 2px solid #e2e2e2;
     border-radius: 5px;
