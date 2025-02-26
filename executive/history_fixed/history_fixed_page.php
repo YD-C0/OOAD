@@ -258,7 +258,7 @@ foreach ($notReady_ambu_data as $num) {
 
 
     <select class="select" id="select_type" name="option">
-        <option value="" disabled selected>เลือกประเภทของสิ่งที่ซ่อม</option>
+        <option value="" selected>เลือกประเภทของสิ่งที่ซ่อม</option>
         <?php foreach ($type_data as $row) { ?>
             <option value="<?php echo $row["repair_type"]; ?>">
                 <?php echo $row["repair_type"]; ?>
