@@ -316,7 +316,7 @@ foreach ($notReady_ambu_data as $num) {
 
     <script>
 
-
+    //ตั้งตัวแปรไว้ให้ history_script.js ดึงไปใช้ต่อ
     const ambuData = {
         allAmbu: <?php echo $all_ambu; ?>,
         readyAmbu: <?php echo $ready_ambu; ?>,
