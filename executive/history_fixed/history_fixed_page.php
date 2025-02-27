@@ -120,9 +120,8 @@ foreach ($notReady_ambu_data as $num) {
     }
 }
 //----------------------------
-
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="th">
@@ -316,101 +315,18 @@ foreach ($notReady_ambu_data as $num) {
     </main>
 
     <script>
-        // สคริปต์สำหรับเปิด-ปิด Sidebar
-        document.addEventListener("DOMContentLoaded", () => {
-            const filterIcon = document.querySelector(".filter-icon");
-            const sidebar = document.getElementById("filterSidebar");
-            const closeSidebar = document.querySelector(".close-sidebar");
 
-            // เปิด Sidebar
-            filterIcon.addEventListener("click", () => {
-                sidebar.classList.add("open");
-            });
 
-            // ปิด Sidebar
-            closeSidebar.addEventListener("click", () => {
-                sidebar.classList.remove("open");
-            });
-
-            // ปิด Sidebar เมื่อคลิกนอก Sidebar
-            document.addEventListener("click", (e) => {
-                if (!sidebar.contains(e.target) && !filterIcon.contains(e.target)) {
-                    sidebar.classList.remove("open");
-                }
-            });
-
-        });
-
-        // รับตัวแปร php ที่แสดงจำนวนรถทั้งหมด, รถที่พร้อม, รถที่ไม่พร้อม
-        let allAmbu = <?php echo $all_ambu?>;
-        let ReadyAmbu = <?php echo $ready_ambu?>;
-        let notReadyAmbu = <?php echo $notReady_ambu?>;
-
-        // คำนวณ % รถที่พร้อมต่อจำนวนรถทั้งหมด
-        let percent = (ReadyAmbu/allAmbu) * 100;
-        // ถ้า % รถที่พร้อมต่ำกว่าที่ต้องการ ให้ขึ้น alert
-        if (percent < 80) {
-            alert("รถพยาบาลพร้อมใช้งานน้อยกว่า 80% ");
-        }
-
-        //----------------------------
-        //Bar Chart แสดงจำนวนครั้งการซ่อมของรถแต่ละคัน
-        const AmbuLabels = <?php echo json_encode(array_column($ambu_data, 'ambulance_level')); ?>;
-        const AmbuCars = <?php echo json_encode($countAmLevel); ?>;
-        const AmbuChart = new Chart(document.getElementById("ambulance_fixed"), {
-            type: 'bar',
-            data: {
-                labels: AmbuLabels,
-                datasets: [{
-                    label: 'จำนวนครั้งที่ซ่อม',
-                    data: AmbuCars,
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'จำนวนการซ่อมรถพยาบาล level 1-3'
-                    }
-                }
-            }
-        });
-        //----------------------------
-
-        //----------------------------
-        //Doughnut Chart แสดงสัดส่วนประเภทการซ่อมทั้งหมด
-        const TypeLabels = <?php echo json_encode(array_column($type_data, 'repair_type')); ?>;
-        const Types = <?php echo json_encode(array_map(fn($label) => $countType[$label] ?? 0, array_column($type_data, 'repair_type'))); ?>;
-
-        const TypeChart = new Chart(document.getElementById("type_fixed"), {
-            type: 'doughnut',
-            data: {
-                labels: TypeLabels,
-                datasets: [{
-                    label: 'จำนวน',
-                    data: Types,
-                    backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)'
-                    ],
-                    borderColor: 'rgb(166, 169, 175)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'สัดส่วนของประเภทการซ่อม'
-                    }
-                }
-            }
-
-        });
-        //----------------------------
+    const ambuData = {
+        allAmbu: <?php echo $all_ambu; ?>,
+        readyAmbu: <?php echo $ready_ambu; ?>,
+        notReadyAmbu: <?php echo $notReady_ambu; ?>,
+        ambuLabels: <?php echo json_encode(array_column($ambu_data, 'ambulance_level')); ?>,
+        ambuCars: <?php echo json_encode($countAmLevel); ?>,
+        typeLabels: <?php echo json_encode(array_column($type_data, 'repair_type')); ?>,
+        typeCounts: <?php echo json_encode(array_map(fn($label) => $countType[$label] ?? 0, array_column($type_data, 'repair_type'))); ?>
+    };
+      
     </script>
 </body>
 
