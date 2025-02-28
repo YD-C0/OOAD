@@ -113,7 +113,6 @@ $all_data = mysqli_fetch_all($query_all, MYSQLI_ASSOC);
             <td><?php echo $rs_result['repair_repairing']; ?></td>
             <td><?php echo $rs_result['repair_status']; ?></td>
 
-            <!-- ยังไม่มีข้อมูลที่เก็บตรงนี้ เลยยังดึงมาไม่ได้ -->
             <td>
                 <?php if ($rs_result['repair_cost'] == '0') { ?>
                     <?php echo "-" ?>

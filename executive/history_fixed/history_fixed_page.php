@@ -9,6 +9,18 @@ $query_all = mysqli_query(
 );
 $all_data = mysqli_fetch_all($query_all, MYSQLI_ASSOC);
 
+// ข้อมูลเฉพาะวันนี้
+$query_today = mysqli_query(
+    $conn,
+    "SELECT * from repair 
+        INNER JOIN ambulance on ambulance.ambulance_id = repair.ambulance_id
+        INNER JOIN repair_staff on repair.repair_staff_id = repair_staff.repair_staff_id
+    WHERE repair_date = CURRENT_DATE"
+);
+
+$today_data = mysqli_fetch_all($query_today, MYSQLI_ASSOC);
+print_r($today_data);
+
 // ประเภท
 $type_query = mysqli_query(
     $conn,
@@ -50,7 +62,7 @@ $ambu_data = mysqli_fetch_all($ambu_query, MYSQLI_ASSOC);
 $countAmLevel = array_fill_keys(array_column($ambu_data, 'ambulance_level'), 0);
 
 // นับจำนวนครั้งที่แต่ละ ambulance_level ปรากฏใน $all_data
-foreach ($all_data as $row) {
+foreach ($today_data as $row) {
     if (isset($countAmLevel[$row['ambulance_level']])) {
         $countAmLevel[$row['ambulance_level']]++;
     }
@@ -64,7 +76,7 @@ foreach ($all_data as $row) {
 // เตรียมอาร์เรย์นับจำนวน
 $countType = array_fill_keys(array_column($type_data, 'repair_type'), 0);
 // นับจำนวนครั้งที่แต่ละ ambulance_id ปรากฏใน $all_data
-foreach ($all_data as $row) {
+foreach ($today_data as $row) {
     if (isset($countType[$row['repair_type']])) {
         $countType[$row['repair_type']]++;
     }
@@ -299,7 +311,7 @@ foreach ($notReady_ambu_data as $num) {
                     <td><?php echo $rs_result['repair_reason']; ?></td>
                     <td><?php echo $rs_result['repair_repairing']; ?></td>
                     <td><?php echo $rs_result['repair_status']; ?></td>
-                    <!-- ยังไม่มีข้อมูลที่เก็บตรงนี้ เลยยังดึงมาไม่ได้ -->
+
                     <td>
                         <?php if ($rs_result['repair_cost'] == '0') { ?>
                             <?php echo "-" ?>
