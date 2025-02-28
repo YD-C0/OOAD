@@ -65,13 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // รับค่าจาก PHP จากตัวแปรที่เราตั้งไว้ใน <script> ขอ history_fixed_page.php
   const { allAmbu, readyAmbu, notReadyAmbu, ambuLabels, ambuCars, typeLabels, typeCounts } = ambuData;
 
-  // คำนวณ % รถที่พร้อมต่อจำนวนรถทั้งหมด
-  let percent = (readyAmbu / allAmbu) * 100;
+  // คำนวณ % รถที่ไม่พร้อมต่อจำนวนรถทั้งหมด
+  let percent = (notReadyAmbu / allAmbu) * 100;
 
-  // ถ้า % รถที่พร้อมต่ำกว่า 80 ให้ขึ้นแจ้งเตือน
-  if (percent < 80) {
-    alert("รถพยาบาลพร้อมใช้งานน้อยกว่า 80%");
+  // ถ้า % รถที่ไม่พร้อมมากกว่า 65 ให้ขึ้นแจ้งเตือน
+  if (percent > 65) {
+    alert("รถพยาบาลไม่พร้อมใช้งานมากกว่า 65%");
   }
+  // console.log(percent);
 
   console.log("AmbuData:", ambuData);
 
