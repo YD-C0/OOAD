@@ -17,9 +17,8 @@ $query_today = mysqli_query(
         INNER JOIN repair_staff on repair.repair_staff_id = repair_staff.repair_staff_id
     WHERE repair_date = CURRENT_DATE"
 );
-
 $today_data = mysqli_fetch_all($query_today, MYSQLI_ASSOC);
-print_r($today_data);
+
 
 // ประเภท
 $type_query = mysqli_query(
