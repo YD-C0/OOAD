@@ -155,10 +155,6 @@ async function filterTable() {
   const filterStatus = document.getElementById("status_select").value;
   const filterCost = document.getElementById("cost_select").value;
 
-
-  console.log("hello2-/")
-
-  //สร้าง object เก็บ
   //สร้าง object เก็บ
   let data = {
     "date1": filterDate1,
